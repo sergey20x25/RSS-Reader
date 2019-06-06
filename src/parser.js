@@ -18,6 +18,6 @@ export default (rssData) => {
     channelDesc,
     items,
   };
-  
+
   return channel;
 };
