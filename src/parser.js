@@ -18,7 +18,6 @@ export default (rssData) => {
     channelDesc,
     items,
   };
-
-  console.log(channel);
+  
   return channel;
 };

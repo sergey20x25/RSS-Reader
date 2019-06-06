@@ -3,12 +3,13 @@ import axios from 'axios';
 import state from './state';
 import isValid from './validator';
 import parseRss from './parser';
-import render from './render';
+import { renderList, renderAlert } from './render';
 
 export default () => {
   const input = document.getElementById('feed-input');
   const button = document.getElementById('button-addon2');
   const loading = document.getElementById('loading-icon');
+  const alert = document.getElementById('alert');
   const cors = 'https://cors-anywhere.herokuapp.com/';
 
   // Работа с состоянием
@@ -63,10 +64,11 @@ export default () => {
 
   watch(state, 'error', () => {
     console.log(state.error);
+    alert.innerHTML = renderAlert('Ошибка!');
   });
 
   watch(state, 'channels', () => {
-    render(state);
+    renderList(state);
   });
 
   watch(state, 'loading', () => {
