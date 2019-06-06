@@ -8,6 +8,7 @@ import render from './render';
 export default () => {
   const input = document.getElementById('feed-input');
   const button = document.getElementById('button-addon2');
+  const loading = document.getElementById('loading-icon');
   const cors = 'https://cors-anywhere.herokuapp.com/';
 
   // Работа с состоянием
@@ -26,6 +27,7 @@ export default () => {
 
   button.addEventListener('click', () => {
     const feed = state.input;
+    state.loading = true;
     axios.get(`${cors}${feed}`)
       .then(({ data }) => {
         state.channels.push(parseRss(data));
@@ -34,6 +36,9 @@ export default () => {
       })
       .catch((error) => {
         state.error = error;
+      })
+      .finally(() => {
+        state.loading = false;
       });
   });
 
@@ -62,5 +67,14 @@ export default () => {
 
   watch(state, 'channels', () => {
     render(state);
+  });
+
+  watch(state, 'loading', () => {
+    if (state.loading) {
+      loading.classList.remove('invisible');
+      button.setAttribute('disabled', 'disabled');
+    } else {
+      loading.classList.add('invisible');
+    }
   });
 };

@@ -2,6 +2,7 @@ const state = {
   valid: '',
   feeds: [],
   input: '',
+  loading: false,
   error: '',
   channels: [],
 };

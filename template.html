@@ -12,10 +12,18 @@
             <h1 class="display-4">RSS reader</h1>
             <p class="lead">This is a simple RSS reader.</p>
             <hr class="my-4">
-            <div class="input-group mb-3">
-              <input type="text" id="feed-input" class="form-control" placeholder="RSS feed URL" aria-label="RSS feed URL" aria-describedby="button-addon2">
-              <div class="input-group-append">
-                <button class="btn btn-outline-secondary" type="button" id="button-addon2" disabled>Add</button>
+            <div class="row">
+              <div class="col-8">
+                <div class="input-group mb-3">
+                  <input type="text" id="feed-input" class="form-control" placeholder="RSS feed URL" aria-label="RSS feed URL" aria-describedby="button-addon2">
+                  <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="button-addon2" disabled>Add</button>
+                  </div>
+                </div>
+              </div>
+              <div class="col invisible" id="loading-icon">
+                <span class="spinner-border spinner-border-md text-secondary" role="status" aria-hidden="true"></span>
+                <span class="sr-only">Loading...</span>
               </div>
             </div>
           </div>
