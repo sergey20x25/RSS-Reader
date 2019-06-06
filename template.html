@@ -5,24 +5,25 @@
   </head>
 
   <body>
-    <div class="jumbotron rounded-0">
-      <h1 class="display-4">RSS reader</h1>
-      <p class="lead">This is a simple RSS reader.</p>
-      <hr class="my-4">
-      <div class="col-6">
-        <div class="input-group mb-3">
-          <input type="text" id="feed-input" class="form-control" placeholder="RSS feed URL" aria-label="RSS feed URL" aria-describedby="button-addon2">
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary" type="button" id="button-addon2" disabled>Add</button>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          <div class="jumbotron rounded-0">
+            <h1 class="display-4">RSS reader</h1>
+            <p class="lead">This is a simple RSS reader.</p>
+            <hr class="my-4">
+            <div class="input-group mb-3">
+              <input type="text" id="feed-input" class="form-control" placeholder="RSS feed URL" aria-label="RSS feed URL" aria-describedby="button-addon2">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="button-addon2" disabled>Add</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="container">
       <div class="row">
-          <div class="col-sm" id="feeds">
-          </div>
-        </div>
+        <div class="col-sm" id="feeds"></div>
+      </div>
     </div>
   </body>
 </html>
