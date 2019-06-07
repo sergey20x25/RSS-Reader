@@ -3,7 +3,7 @@ import axios from 'axios';
 import state from './state';
 import isValid from './validator';
 import parseRss from './parser';
-import { renderList, renderAlert } from './render';
+import { renderList, renderAlert, renderModal } from './renderers';
 
 export default () => {
   const input = document.getElementById('feed-input');
@@ -69,6 +69,7 @@ export default () => {
 
   watch(state, 'channels', () => {
     renderList(state);
+    renderModal(state);
   });
 
   watch(state, 'loading', () => {
