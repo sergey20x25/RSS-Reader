@@ -1,8 +1,7 @@
 const state = {
-  valid: '',
+  formState: '',
   feeds: [],
   input: '',
-  loading: false,
   error: '',
   channels: [],
 };

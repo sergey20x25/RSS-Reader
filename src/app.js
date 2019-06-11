@@ -1,7 +1,8 @@
 import { watch } from 'melanke-watchjs';
 import axios from 'axios';
+import $ from 'jquery';
 import state from './state';
-import isValid from './validator';
+import validator from './validator';
 import parseRss from './parser';
 import { renderList, renderAlert, renderModal } from './renderers';
 
@@ -12,11 +13,39 @@ export default () => {
   const alert = document.getElementById('alert');
   const cors = 'https://cors-anywhere.herokuapp.com/';
 
+  const formStateMethods = {
+    valid() {
+      input.classList.remove('is-invalid');
+      button.removeAttribute('disabled');
+    },
+    invalid() {
+      input.classList.add('is-invalid');
+      button.setAttribute('disabled', 'disabled');
+    },
+    loading() {
+      button.setAttribute('disabled', 'disabled');
+      loading.classList.remove('invisible');
+    },
+    init() {
+      loading.classList.add('invisible');
+      input.value = '';
+      button.setAttribute('disabled', 'disabled');
+    },
+    error() {
+      loading.classList.add('invisible');
+      console.log(state.error);
+      alert.innerHTML = renderAlert('Error!');
+      setTimeout(() => {
+        $('.alert').alert('close');
+      }, 7000);
+    },
+  };
+
   // Работа с состоянием
 
   input.addEventListener('input', ({ target }) => {
     state.input = target.value;
-    state.valid = isValid(state);
+    state.formState = validator(state);
   });
 
   input.addEventListener('keyup', (event) => {
@@ -28,56 +57,33 @@ export default () => {
 
   button.addEventListener('click', () => {
     const feed = state.input;
-    state.loading = true;
+    state.formState = 'loading';
     axios.get(`${cors}${feed}`)
-      .then(({ data }) => {
-        state.channels.push(parseRss(data));
-        state.feeds.push(feed);
-        state.input = '';
+      .then((response) => {
+        if (response.headers['content-type'].includes('application/rss+xml')) {
+          state.channels.push(parseRss(response));
+          state.feeds.push(feed);
+          state.formState = 'init';
+        } else {
+          state.formState = 'error';
+        }
       })
       .catch((error) => {
         state.error = error;
-      })
-      .finally(() => {
-        state.loading = false;
+        state.formState = 'error';
       });
   });
 
   // Работа с DOM
 
-  watch(state, 'valid', () => {
-    if (state.valid === true) {
-      input.classList.remove('is-invalid');
-    } else {
-      input.classList.add('is-invalid');
-    }
-    button.removeAttribute('disabled');
-    if (!state.valid) {
-      button.setAttribute('disabled', 'disabled');
-    }
+  watch(state, 'formState', () => {
+    formStateMethods[state.formState]();
   });
 
-  watch(state, 'feeds', () => {
-    input.value = '';
-    button.setAttribute('disabled', 'disabled');
-  });
-
-  watch(state, 'error', () => {
-    console.log(state.error);
-    alert.innerHTML = renderAlert('Ошибка!');
-  });
 
   watch(state, 'channels', () => {
     renderList(state);
     renderModal(state);
   });
 
-  watch(state, 'loading', () => {
-    if (state.loading) {
-      loading.classList.remove('invisible');
-      button.setAttribute('disabled', 'disabled');
-    } else {
-      loading.classList.add('invisible');
-    }
-  });
 };
