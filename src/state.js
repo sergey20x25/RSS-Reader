@@ -1,9 +1,10 @@
 const state = {
   formState: '',
-  feeds: [],
   input: '',
+  feeds: [],
   error: '',
   channels: [],
+  toUpdate: [],
 };
 
 export default state;

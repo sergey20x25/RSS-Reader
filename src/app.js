@@ -3,8 +3,11 @@ import axios from 'axios';
 import $ from 'jquery';
 import state from './state';
 import validator from './validator';
-import parseRss from './parser';
-import { renderList, renderAlert, renderModal } from './renderers';
+import parseChannel from './parsers';
+import {
+  renderList, renderAlert, renderModal, renderUpdate,
+} from './renderers';
+import update from './update';
 
 export default () => {
   const input = document.getElementById('feed-input');
@@ -60,8 +63,8 @@ export default () => {
     state.formState = 'loading';
     axios.get(`${cors}${feed}`)
       .then((response) => {
-        if (response.headers['content-type'].includes('application/rss+xml')) {
-          state.channels.push(parseRss(response));
+        if (response.headers['content-type'].search(/application.*xml/) !== -1) {
+          state.channels.push(parseChannel(response));
           state.feeds.push(feed);
           state.formState = 'init';
         } else {
@@ -81,9 +84,14 @@ export default () => {
   });
 
 
-  watch(state, 'channels', () => {
+  watch(state, 'feeds', () => {
     renderList(state);
     renderModal(state);
   });
 
+  watch(state, 'toUpdate', () => {
+    renderUpdate(state);
+  });
+
+  update();
 };
