@@ -1,8 +1,8 @@
 import isURL from 'validator/lib/isURL';
 
-export default (state) => {
-  if (isURL(state.input) && !state.feeds.includes(state.input)) {
-    return 'valid';
+export default ({ input, feeds }) => {
+  if (isURL(input) && !feeds.includes(input)) {
+    return true;
   }
-  return 'invalid';
+  return false;
 };

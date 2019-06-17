@@ -1,15 +1,25 @@
+/* eslint no-param-reassign: ["error", { "props": false }] */
+
 import { watch } from 'melanke-watchjs';
 import axios from 'axios';
 import $ from 'jquery';
-import state from './state';
-import validator from './validator';
-import parseChannel from './parsers';
+import _ from 'lodash';
+import isValid from './validator';
+import parseChannel from './parser';
 import {
   renderList, renderAlert, renderModal, renderUpdate,
 } from './renderers';
-import update from './update';
 
 export default () => {
+  const state = {
+    formState: '',
+    input: '',
+    feeds: [],
+    error: '',
+    channels: [],
+    toUpdate: [],
+  };
+
   const input = document.getElementById('feed-input');
   const button = document.getElementById('button-addon2');
   const loading = document.getElementById('loading-icon');
@@ -48,11 +58,11 @@ export default () => {
 
   input.addEventListener('input', ({ target }) => {
     state.input = target.value;
-    state.formState = validator(state);
+    state.formState = isValid(state) ? 'valid' : 'invalid';
   });
 
   input.addEventListener('keyup', (event) => {
-    if (event.keyCode === 13) {
+    if (event.key === 'Enter') {
       event.preventDefault();
       button.click();
     }
@@ -63,19 +73,48 @@ export default () => {
     state.formState = 'loading';
     axios.get(`${cors}${feed}`)
       .then((response) => {
-        if (response.headers['content-type'].search(/application.*xml/) !== -1) {
-          state.channels.push(parseChannel(response));
-          state.feeds.push(feed);
-          state.formState = 'init';
-        } else {
-          state.formState = 'error';
-        }
+        const parsedCannel = parseChannel(response);
+        state.channels.push(parsedCannel);
+        state.feeds.push(feed);
+        state.formState = 'init';
       })
       .catch((error) => {
         state.error = error;
         state.formState = 'error';
       });
   });
+
+  const updateChannels = () => {
+    const { channels } = state;
+    const responsedNewChannels = channels.map(({ channelFeed }) => axios.get(channelFeed)
+      .then(response => parseChannel(response)));
+
+    axios.all(responsedNewChannels)
+      .then((newChannels) => {
+        const newItems = newChannels.map((newChannel, i) => {
+          const channel = state.channels[i];
+          if (newChannel.latestItemDate > channel.latestItemDate) {
+            const newChannelItems = newChannel.items.filter(({ pubDate }) => (
+              pubDate > channel.latestItemDate));
+            newChannelItems.forEach((item) => {
+              item.channelId = channel.channelId;
+            });
+            state.channels[i].latestItemDate = newChannel.latestItemDate;
+            return newChannelItems;
+          }
+          return [];
+        });
+        const itemsToUpdate = _.flatten(newItems);
+        if (itemsToUpdate.length > 0) {
+          state.toUpdate = itemsToUpdate;
+        }
+      })
+      .catch((error) => {
+        state.error = error;
+        state.formState = 'error';
+      })
+      .finally(() => setTimeout(updateChannels, 5000));
+  };
 
   // Работа с DOM
 
@@ -93,5 +132,5 @@ export default () => {
     renderUpdate(state);
   });
 
-  update();
+  updateChannels(state);
 };
