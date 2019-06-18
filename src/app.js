@@ -3,7 +3,7 @@
 import { watch } from 'melanke-watchjs';
 import axios from 'axios';
 import $ from 'jquery';
-import { flatten } from 'lodash';
+import { flatten, maxBy } from 'lodash';
 import isValid from './validator';
 import parseChannel from './parser';
 import {
@@ -54,6 +54,8 @@ export default () => {
     },
   };
 
+  const getLatestItemDate = items => maxBy(items, 'pubDate').pubDate;
+
   input.addEventListener('input', ({ target }) => {
     state.input = target.value;
     state.formState = isValid(state) ? 'valid' : 'invalid';
@@ -64,8 +66,10 @@ export default () => {
     state.formState = 'loading';
     axios.get(`${cors}${feed}`)
       .then((response) => {
-        const parsedCannel = parseChannel(response);
-        state.channels.push(parsedCannel);
+        const parsedChannel = parseChannel(response.data);
+        parsedChannel.channelFeed = response.config.url;
+        parsedChannel.latestItemDate = getLatestItemDate(parsedChannel.items);
+        state.channels.push(parsedChannel);
         state.feeds.push(feed);
         state.formState = 'init';
       })
@@ -87,7 +91,10 @@ export default () => {
     const requests = channels.map(({ channelFeed }) => axios.get(channelFeed));
     axios.all(requests)
       .then((responses) => {
-        const newChannels = responses.map(response => parseChannel(response));
+        const newChannels = responses.map(response => parseChannel(response.data));
+        newChannels.forEach((newChannel) => {
+          newChannel.latestItemDate = getLatestItemDate(newChannel.items);
+        });
         const newItems = newChannels.map((newChannel, i) => {
           const channel = state.channels[i];
           if (newChannel.latestItemDate > channel.latestItemDate) {
@@ -96,11 +103,18 @@ export default () => {
             newChannelItems.forEach((item) => {
               item.channelId = channel.channelId;
             });
-            state.channels[i].latestItemDate = newChannel.latestItemDate;
+            // state.channels[i].latestItemDate = newChannel.latestItemDate;
             return newChannelItems;
           }
           return [];
         });
+
+        newItems.forEach((items, i) => {
+          if (items.length !== 0) {
+            state.channels[i].latestItemDate = getLatestItemDate(items);
+          }
+        });
+
         const itemsToUpdate = flatten(newItems);
         if (itemsToUpdate.length > 0) {
           state.toUpdate = itemsToUpdate;

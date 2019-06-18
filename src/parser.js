@@ -1,10 +1,8 @@
-import { uniqueId, maxBy } from 'lodash';
+import { uniqueId } from 'lodash';
 
 export default (data) => {
-  const channelFeed = data.config.url;
-  const rssData = data.data;
   const parser = new DOMParser();
-  const doc = parser.parseFromString(rssData, 'application/xml');
+  const doc = parser.parseFromString(data, 'application/xml');
   const channelTitle = doc.querySelector('title').textContent;
   const channelDesc = doc.querySelector('description').textContent;
   const channelId = uniqueId('channel_');
@@ -25,14 +23,10 @@ export default (data) => {
     };
   });
 
-  const latestItemDate = maxBy(items, 'pubDate').pubDate;
-
   const channel = {
     channelId,
-    channelFeed,
     channelTitle,
     channelDesc,
-    latestItemDate,
     items,
   };
   return channel;
