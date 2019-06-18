@@ -3,7 +3,7 @@
 import { watch } from 'melanke-watchjs';
 import axios from 'axios';
 import $ from 'jquery';
-import _ from 'lodash';
+import { flatten } from 'lodash';
 import isValid from './validator';
 import parseChannel from './parser';
 import {
@@ -54,18 +54,9 @@ export default () => {
     },
   };
 
-  // Работа с состоянием
-
   input.addEventListener('input', ({ target }) => {
     state.input = target.value;
     state.formState = isValid(state) ? 'valid' : 'invalid';
-  });
-
-  input.addEventListener('keyup', (event) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      button.click();
-    }
   });
 
   button.addEventListener('click', () => {
@@ -84,13 +75,19 @@ export default () => {
       });
   });
 
+  input.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      button.click();
+    }
+  });
+
   const updateChannels = () => {
     const { channels } = state;
-    const responsedNewChannels = channels.map(({ channelFeed }) => axios.get(channelFeed)
-      .then(response => parseChannel(response)));
-
-    axios.all(responsedNewChannels)
-      .then((newChannels) => {
+    const requests = channels.map(({ channelFeed }) => axios.get(channelFeed));
+    axios.all(requests)
+      .then((responses) => {
+        const newChannels = responses.map(response => parseChannel(response));
         const newItems = newChannels.map((newChannel, i) => {
           const channel = state.channels[i];
           if (newChannel.latestItemDate > channel.latestItemDate) {
@@ -104,7 +101,7 @@ export default () => {
           }
           return [];
         });
-        const itemsToUpdate = _.flatten(newItems);
+        const itemsToUpdate = flatten(newItems);
         if (itemsToUpdate.length > 0) {
           state.toUpdate = itemsToUpdate;
         }
@@ -116,12 +113,9 @@ export default () => {
       .finally(() => setTimeout(updateChannels, 5000));
   };
 
-  // Работа с DOM
-
   watch(state, 'formState', () => {
     formStateMethods[state.formState]();
   });
-
 
   watch(state, 'feeds', () => {
     renderList(state);
