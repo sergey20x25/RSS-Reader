@@ -137,6 +137,7 @@ export default () => {
 
   watch(state, 'toUpdate', () => {
     renderUpdate(state);
+    $('.fadeIn').fadeIn('slow');
   });
 
   updateChannels(state);

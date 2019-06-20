@@ -56,7 +56,8 @@ export const renderUpdate = ({ toUpdate }) => {
   }) => {
     const channelEl = document.getElementById(channelId);
     const liEl = document.createElement('li');
-    liEl.classList.add('list-group-item', 'animated', 'fadeIn');
+    liEl.classList.add('list-group-item', 'fadeIn');
+    liEl.setAttribute('style', 'display:none');
     liEl.innerHTML = `
       <a href="${itemLink}">${itemTitle}</a>
       <button type="button" class="btn btn-outline-secondary btn-sm float-right" data-toggle="modal" data-target="#${id}">
