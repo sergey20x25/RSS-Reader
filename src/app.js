@@ -86,35 +86,34 @@ export default () => {
     }
   });
 
+  const getNewChannelItems = ({ items }, i) => {
+    const latestItemDate = getLatestItemDate(items);
+    const channel = state.channels[i];
+    if (latestItemDate > channel.latestItemDate) {
+      const newChannelItems = items.filter(({ pubDate }) => (
+        pubDate > channel.latestItemDate));
+      newChannelItems.forEach((item) => {
+        item.channelId = channel.channelId;
+      });
+      return newChannelItems;
+    }
+    return [];
+  };
+
+  const updateLatestItemDates = (items, i) => {
+    if (items.length !== 0) {
+      state.channels[i].latestItemDate = getLatestItemDate(items);
+    }
+  };
+
   const updateChannels = () => {
     const { channels } = state;
     const requests = channels.map(({ channelFeed }) => axios.get(channelFeed));
     axios.all(requests)
       .then((responses) => {
         const newChannels = responses.map(response => parseChannel(response.data));
-        newChannels.forEach((newChannel) => {
-          newChannel.latestItemDate = getLatestItemDate(newChannel.items);
-        });
-        const newItems = newChannels.map((newChannel, i) => {
-          const channel = state.channels[i];
-          if (newChannel.latestItemDate > channel.latestItemDate) {
-            const newChannelItems = newChannel.items.filter(({ pubDate }) => (
-              pubDate > channel.latestItemDate));
-            newChannelItems.forEach((item) => {
-              item.channelId = channel.channelId;
-            });
-            // state.channels[i].latestItemDate = newChannel.latestItemDate;
-            return newChannelItems;
-          }
-          return [];
-        });
-
-        newItems.forEach((items, i) => {
-          if (items.length !== 0) {
-            state.channels[i].latestItemDate = getLatestItemDate(items);
-          }
-        });
-
+        const newItems = newChannels.map(getNewChannelItems);
+        newItems.forEach(updateLatestItemDates);
         const itemsToUpdate = flatten(newItems);
         if (itemsToUpdate.length > 0) {
           state.toUpdate = itemsToUpdate;
