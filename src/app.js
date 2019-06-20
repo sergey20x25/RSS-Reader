@@ -86,7 +86,7 @@ export default () => {
     }
   });
 
-  const getNewChannelItems = ({ items }, i) => {
+  const getNewChannelsItems = ({ items }, i) => {
     const latestItemDate = getLatestItemDate(items);
     const channel = state.channels[i];
     if (latestItemDate > channel.latestItemDate) {
@@ -112,7 +112,7 @@ export default () => {
     axios.all(requests)
       .then((responses) => {
         const newChannels = responses.map(response => parseChannel(response.data));
-        const newItems = newChannels.map(getNewChannelItems);
+        const newItems = newChannels.map(getNewChannelsItems);
         newItems.forEach(updateLatestItemDates);
         const itemsToUpdate = flatten(newItems);
         if (itemsToUpdate.length > 0) {
