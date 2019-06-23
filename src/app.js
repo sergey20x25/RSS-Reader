@@ -127,6 +127,7 @@ export default () => {
   watch(state, 'feeds', () => {
     renderList(state);
     renderModal(state);
+    $('.fadeIn').fadeIn('slow');
   });
 
   watch(state, 'toUpdate', () => {

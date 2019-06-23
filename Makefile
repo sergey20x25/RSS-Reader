@@ -11,3 +11,5 @@ build:
 	npm run build
 test:
 	npm test
+server:
+	npm run start:dev

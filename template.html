@@ -6,10 +6,10 @@
   </head>
 
   <body>
-    <div class="container">
+    <div class="container-fluid px-0">
       <div class="row">
         <div class="col-sm">
-          <div class="jumbotron rounded-0">
+          <div class="jumbotron bg-secondary text-white rounded-0 px-5">
             <h1 class="display-4">RSS reader</h1>
             <p class="lead">This is a simple RSS reader.</p>
             <hr class="my-4">
@@ -18,34 +18,32 @@
                 <div class="input-group mb-3">
                   <input type="text" id="feed-input" class="form-control" placeholder="RSS feed URL" aria-label="RSS feed URL" aria-describedby="button-addon2">
                   <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" id="button-addon2" disabled>Add</button>
+                    <button class="btn btn-outline-light" type="button" id="button-addon2" disabled>Add</button>
                   </div>
                 </div>
                 <div id="alert"></div>
               </div>
               <div class="col invisible" id="loading-icon">
-                <span class="spinner-border spinner-border-md text-secondary" role="status" aria-hidden="true"></span>
+                <span class="spinner-border spinner-border-md text-white" role="status" aria-hidden="true"></span>
                 <span class="sr-only">Loading...</span>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="row">
+      <div class="row px-5">
         <div class="col-sm" id="feeds">
           <div style="height: 400px;"></div>
         </div>
       </div>
     </div>
     <footer>
-      <div class="container">
-        <div class="row row-30">
-          <div class="col-md">
-            <div style="background: #e9ecef;">
-              <a href="https://github.com/sergey20x25/" target="_blank">
-                <p style="text-align: center; margin: 0%; padding: 15px">2019 sergey20x25</p>
-              </a>
-            </div>
+      <div class="container-fluid px-0 bg-secondary">
+        <div class="row">
+          <div class="col">
+            <a href="https://github.com/sergey20x25/" target="_blank">
+              <p class="text-white text-center my-3">sergey20x25</p>
+            </a>
           </div>
         </div>
       </div>

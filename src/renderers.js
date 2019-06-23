@@ -6,7 +6,7 @@ export const renderList = ({ channels }) => {
     <h2>${channelTitle}</h2>
     <p>${channelDesc}</p>
     <ul class="list-group list-group" id="${channelId}">
-      ${items.map(({ itemTitle, itemLink, id }) => `<li class="list-group-item">
+      ${items.map(({ itemTitle, itemLink, id }) => `<li class="list-group-item fadeIn" style="display:none">
         <a href="${itemLink}">${itemTitle}</a>
         <button type="button" class="btn btn-outline-secondary btn-sm float-right" data-toggle="modal" data-target="#${id}">
           Preview
