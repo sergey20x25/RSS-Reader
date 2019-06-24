@@ -3,9 +3,12 @@ export const renderList = ({ channels }) => {
   const listHtml = channels.map(({
     channelTitle, channelDesc, channelId, items,
   }) => `
-    <h2>${channelTitle}</h2>
-    <p>${channelDesc}</p>
-    <ul class="list-group list-group" id="${channelId}">
+    <a href="#${channelId}" class="text-decoration-none text-body" role="button" data-toggle="collapse" aria-expanded="true" aria-controls="${channelId}">
+      <div>
+        <h2>${channelTitle}</h2>
+        <p>${channelDesc}</p>
+      </div>
+    <ul class="list-group list-group collapse show" id="${channelId}">
       ${items.map(({ itemTitle, itemLink, id }) => `<li class="list-group-item fadeIn" style="display:none">
         <a href="${itemLink}">${itemTitle}</a>
         <button type="button" class="btn btn-outline-secondary btn-sm float-right" data-toggle="modal" data-target="#${id}">

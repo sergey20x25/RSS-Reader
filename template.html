@@ -1,53 +1,45 @@
 <!doctype html>
 <html>
   <head>
-    <meta charset="геа-8"></meta>
+    <meta charset="utf-8"></meta>
     <title>RSS-Reader</title>
   </head>
 
   <body>
-    <div class="container-fluid px-0">
-      <div class="row">
-        <div class="col-sm">
-          <div class="jumbotron bg-secondary text-white rounded-0 px-5">
-            <h1 class="display-4">RSS reader</h1>
-            <p class="lead">This is a simple RSS reader.</p>
-            <hr class="my-4">
-            <div class="row">
-              <div class="col-8">
-                <div class="input-group mb-3">
-                  <input type="text" id="feed-input" class="form-control" placeholder="RSS feed URL" aria-label="RSS feed URL" aria-describedby="button-addon2">
-                  <div class="input-group-append">
-                    <button class="btn btn-outline-light" type="button" id="button-addon2" disabled>Add</button>
-                  </div>
+    <div class="container-fluid min-vh-100 d-flex flex-column">
+      <div class="row bg-secondary">
+        <div class="jumbotron-fluid container-fluid p-5 bg-secondary text-white">
+          <h1 class="display-4">RSS reader</h1>
+          <p class="lead">This is a simple RSS reader.</p>
+          <hr class="my-4">
+          <div class="row">
+            <div class="col-md-11 col-lg-7">
+              <div class="input-group mb-3">
+                <input type="text" id="feed-input" class="form-control" placeholder="RSS feed URL" aria-label="RSS feed URL" aria-describedby="button-addon2">
+                <div class="input-group-append">
+                  <button class="btn btn-outline-light" type="button" id="button-addon2" disabled>Add</button>
                 </div>
-                <div id="alert"></div>
               </div>
-              <div class="col invisible" id="loading-icon">
-                <span class="spinner-border spinner-border-md text-white" role="status" aria-hidden="true"></span>
-                <span class="sr-only">Loading...</span>
-              </div>
+              <div id="alert"></div>
+            </div>
+            <div class="col-1 invisible" id="loading-icon">
+              <span class="spinner-border spinner-border-md text-white" role="status" aria-hidden="true"></span>
+              <span class="sr-only">Loading...</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="row px-5">
-        <div class="col-sm" id="feeds">
-          <div style="height: 400px;"></div>
-        </div>
+      <div class="row px-5 py-4">
+        <div class="col px-0" id="feeds"></div>
       </div>
+      <footer class="row bg-secondary mt-auto">
+        <div class="col">
+          <p class="text-center mb-0 py-3">
+            <a href="https://github.com/sergey20x25/" class="text-white" target="_blank">sergey20x25</a>
+          </p>
+        </div>
+      </footer>
     </div>
-    <footer>
-      <div class="container-fluid px-0 bg-secondary">
-        <div class="row">
-          <div class="col">
-            <a href="https://github.com/sergey20x25/" target="_blank">
-              <p class="text-white text-center my-3">sergey20x25</p>
-            </a>
-          </div>
-        </div>
-      </div>
-    </footer>
     <!-- Modal -->
     <div id="modalContainer"></div>
   </body>

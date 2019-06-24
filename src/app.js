@@ -89,16 +89,16 @@ export default () => {
   const getNewChannelItems = ({ items }, i) => {
     const latestItemDate = getLatestItemDate(items);
     const channel = state.channels[i];
-    if (latestItemDate > channel.latestItemDate) {
-      const newChannelItems = items.filter(({ pubDate }) => (
-        pubDate > channel.latestItemDate));
-      newChannelItems.forEach((item) => {
-        item.channelId = channel.channelId;
-      });
-      state.channels[i].latestItemDate = latestItemDate;
-      return newChannelItems;
+    if (latestItemDate <= channel.latestItemDate) {
+      return [];
     }
-    return [];
+    const newChannelItems = items.filter(({ pubDate }) => (
+      pubDate > channel.latestItemDate));
+    newChannelItems.forEach((item) => {
+      item.channelId = channel.channelId;
+    });
+    state.channels[i].latestItemDate = latestItemDate;
+    return newChannelItems;
   };
 
   const updateChannels = () => {
